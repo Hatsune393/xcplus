@@ -1,10 +1,10 @@
 ## 1. 系统架构
 ### 1.1 功能模块
-![](.\xcplus-pictures/xcplus-功能模块.drawio%20(2).png)
+![](./xcplus-pictures/xcplus-功能模块.drawio%20(2).png)
 ### 1.2 技术架构
 
 ### 1.3 工程模块
-![](.\xcplus-pictures/xcplus-工程结构.drawio.png)
+![](./xcplus-pictures/xcplus-工程结构.drawio.png)
 
 ---
 ## 2. 内容管理模块
@@ -587,7 +587,7 @@ public MediaFilesDto uploadFile(@RequestParam MultipartFile file,
 **断点续传**：对于很大的文件（例如视频），如果用户上传过程中网络波动，导致连接断开，下次用户再传时需要重新开始，则体验会非常差，因此使用断点续传技术；
 
 **断点续传业务流程：**
-![断点续传流程](.\xcplus-pictures/Snipaste_2023-03-03_15-41-06.png)
+![断点续传流程](./xcplus-pictures/Snipaste_2023-03-03_15-41-06.png)
 
 **断点续传接口定义：**
 ```http
@@ -630,7 +630,7 @@ chunkTotal: 13
 分布式任务调度需要考虑监控问题（如何知道哪些机器的任务正常跑完，哪些没有），也需要解决重复执行问题（避免多台及其收到重复的调度指令）；
 
 **XXL-JOB分布式任务调度：**
-![分布式任务调度架构与流程](.\xcplus-pictures/Snipaste_2023-03-04_21-36-01.png)
+![分布式任务调度架构与流程](./xcplus-pictures/Snipaste_2023-03-04_21-36-01.png)
 
 **XXL-JOB 快速入门：** [XXL-JOB快速入门](https://www.xuxueli.com/xxl-job/#2.1%20%E5%88%9D%E5%A7%8B%E5%8C%96%E2%80%9C%E8%B0%83%E5%BA%A6%E6%95%B0%E6%8D%AE%E5%BA%93%E2%80%9D)
 第一步：下载项目源码，获取初始化SQL脚本并执行
@@ -664,7 +664,7 @@ chunkTotal: 13
 2. 每隔一段时间进行任务调度，在数据库中寻找（数量=核心数）条数据，并对原始视频进行转码处理；
 3. 上传转码后的视频，并将原始视频的url设置为转码后视频的url；
 
-![视频处理流程](.\xcplus-pictures/Snipaste_2023-03-04_22-43-39.png)  
+![视频处理流程](./xcplus-pictures/Snipaste_2023-03-04_22-43-39.png)  
 
 ### 媒资绑定功能
 **数据模型定义：** 需要一个新的课程计划-媒资关系表，记录二者的绑定关系；
