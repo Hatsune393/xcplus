@@ -1,0 +1,16 @@
+### 授权码模式
+### 第一步申请授权码(浏览器请求)
+    http://localhost:63070/oauth/authorize?client_id=XcWebApp&response_type=code&scope=all&redirect_uri=http://www.51xuecheng.cn
+### 第二步申请令牌
+POST http://localhost:63070/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=authorization_code&code=KbG3Hl&redirect_uri=http://www.51xuecheng.cn
+
+
+### 密码模式
+#POST http://localhost:63070/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=zhangsan&password=123
+
+###校验jwt令牌
+POST http://localhost:63070/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiY29udGVudC1zZXJ2aWNlIl0sInVzZXJfbmFtZSI6InpoYW5nc2FuIiwic2NvcGUiOlsiYWxsIl0sImV4cCI6MTY3ODcyNTEwNSwiYXV0aG9yaXRpZXMiOlsicDEiXSwianRpIjoiMUk5ZHdHbGZ1eGtLQTR4dkxtcTBWaWJ2bzhvIiwiY2xpZW50X2lkIjoiWGNXZWJBcHAifQ.xevFVuL_65M44xAfJTc6TuUedGlVhWh92R32Wsr5sBk
+
+
+### 密码模式，请求AuthParamsDto参数
+POST http://localhost:63070/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username={"username":"t1","password":"11111","authType":"password"}
