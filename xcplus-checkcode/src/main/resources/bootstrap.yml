@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: checkcode-service
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        namespace: ${spring.profiles.active}
+        group: xuecheng
+      config:
+        namespace: ${spring.profiles.active}
+        group: xuecheng
+        file-extension: yaml
+        refresh-enabled: true
+        shared-configs:
+          - data-id: redis-${spring.profiles.active}.yaml
+            group: xuecheng-common
+            refresh: true
+
+  profiles:
+    active: dev
