@@ -1,23 +1,24 @@
-## 1. 系统架构
-### 1.1 功能模块
-![](./xcplus-pictures/xcplus-功能模块.drawio%20(2).png)
-### 1.2 技术架构
-
-### 1.3 工程模块
+[TOC]
+## 系统架构
+### 功能模块
+![](./xcplus-pictures/xcplus-功能模块.drawio%20(3).png)
+### 技术架构
+![](./xcplus-pictures/xcplus-技术架构.drawio.png)
+### 工程模块
 ![](./xcplus-pictures/xcplus-工程结构.drawio.png)
 
 ---
-## 2. 内容管理模块
-### 2.1 需求分析
+## 内容管理模块
+### 需求分析
 + 课程基本信息管理：包括新课程的创建、课程的更新、课程的查询；
 + 课程分类管理：课程分类的创建、课程分类树状层级关系维护、树状课程分类查询；
 + 课程教学计划管理：树状层级课程计划的创建、树状层级课程计划查询、课程计划修改删除；
 + 教学计划与媒体资源绑定管理：某一节教学计划与对应视频关系的绑定；
 + 课程发布管理：课程的预发布、教师端提交课程审核、运营端对课程进行审核、审核通过后教师端进行课程的发布；
-### 2.2 课程基本信息管理功能
-#### 2.2.1 数据模型
+### 课程基本信息管理功能
+#### 数据模型
 
-#### 2.2.2 接口定义
+#### 接口定义
 **课程信息分页查询接口定义：**
 ```http
 POST /content/course/list?pageNo=2&pageSize=1
@@ -178,7 +179,7 @@ POST /content/teachplan
 
 ```
 
-### 2.2.3 功能开发
+### 功能开发
 
 **编写dto类：** 课程的分页查询请求参数与do类型不一致，因此需要额外编写dto类型
 ```Java
@@ -313,14 +314,16 @@ public CourseBaseInfoDto createNewCourse(@RequestBody @Validated AddCourseDto dt
 ## 媒资管理模块
 
 ### 需求分析
+提供媒体资源的统一管理，需求如下：
++ 媒体资源文件的上传、查询、预览、分页列表查询功能；
++ 大文件的断点续传功能；
++ 视频统一转码为mp4格式：教师上传的视频文件可能有多种格式（avi、mov等），浏览器一般默认支持MP4视频的播放，因此需要将这些教学视频进行转码处理；
 
-### 项目设计
+### 数据模型
 
-**使用网关解决服务的路由问题：**
+### 业务流程
 
-**使用Nacos注册中心解决服务的注册发现问题：**
-
-### Nacos模块搭建
+### 项目开发-注册中心Nacos搭建
 
 **服务注册-快速入门：**
 第一步：docker运行nacos服务
@@ -432,7 +435,7 @@ public CourseBaseInfoDto createNewCourse(@RequestBody @Validated AddCourseDto dt
 
 **配置文件优先级：** 默认云端配置文件 > 拓展云端配置文件 > 共享云端配置文件 > 本地配置文件，但是可以通过在云端设置不覆盖的选项（即`override-none=true`）来提高本地配置优先级；
 
-### 网关模块搭建
+### 项目开发-网关模块搭建
 **网管搭建-快速入门：**
 步骤一：引入依赖【Nacos, Config, cloud-context, cloud-bootstrap, cloud-starter-gateway, cloud-loadbalancer】
 ```xml
@@ -484,11 +487,9 @@ spring:
                 pattern: /content/**
 ```
 
-### 文件系统模块搭建
+### 项目开发-文件系统模块搭建
 
-**MinIO分布式文件系统：** 
-
-**MinIO快速入门：** 
+**MinIO分布式文件系统快速入门：** 
 + [快速入门官方文档](https://min.io/docs/minio/linux/developers/java/minio-java.html)
 + [minio启动一直卡在add local minio host](https://bootschool.net/article/62fa0463f301192a03817e2d/minio-docker-log-adding-local-minio-host-to-mc-configuration)
 
@@ -582,7 +583,7 @@ public MediaFilesDto uploadFile(@RequestParam MultipartFile file,
 
 <font color = green>DONE: Spring如何解决自依赖的代理注入过程？看满老师的课就知道，代理对象创建的时机有两种，一种是初始化之后，一种是实例化之后（依赖注入前），而后者会在有循环依赖的时候进行，从而解决代理对象诸如问题</font>
 
-### 上传视频业务
+### 项目开发-上传视频业务
 
 **断点续传**：对于很大的文件（例如视频），如果用户上传过程中网络波动，导致连接断开，下次用户再传时需要重新开始，则体验会非常差，因此使用断点续传技术；
 
@@ -619,13 +620,7 @@ fileName: Apex Legends 2023-01-22 16-18-38.mp4
 chunkTotal: 13
 ```
 
-### 文件预览功能
-**工作流程**：
-+ 前端请求预览文件接口 ->
-+ 媒资服务返还文件URL ->
-+ 前端请求URL
-
-### 视频处理功能
+### 项目开发-视频转码功能
 **分布式任务调度：** 使用分布式技术来进行任务调度的技术叫做分布式任务调度，即使用多台机器，确保按照原先预设时间的任务能够定时执行；
 分布式任务调度需要考虑监控问题（如何知道哪些机器的任务正常跑完，哪些没有），也需要解决重复执行问题（避免多台及其收到重复的调度指令）；
 
@@ -703,7 +698,7 @@ POST content/teachplan/association/media
 ---
 ## 课程发布
 
-### 课程预览功能
+### 项目开发-课程预览功能
 **freemarker:** 模板引擎，目标是将长期不变的页面转换成静态页面，从而减小服务端访问压力（例如在本课程中，将课程预览页面转换为静态页面并保存）；
 
 常见的java模板引擎技术有：Jsp, Freemarker等；
@@ -886,84 +881,27 @@ GET /content/coursepreview/120
 ```
 
 **门户页面调用流程：**
-```plantuml
-@startuml
-actor "user(browser)" as user
-control nginx as nginx
-entity frontend as frontend
-entity backend as bacnend
+![](./xcplus-pictures/Snipaste_2023-03-21_20-24-18.png)
 
-user -> nginx : 1. visit portal page
-nginx -> user : 2. return portal static page
-user -> nginx : 3. visit course preview page
-nginx -> backend : 4. request for MAV data
-backend -> nginx : 5. return html data (has been redered)
-nginx -> user : 6. return course preview html data (and return host)
-user -> nginx : 7. request for page css/plugin and so on (use above host)
-nginx -> user : 8. return css and plugin...
-user -> user : 9. get the whole page
-@enduml
-```
-
-### 课程审核功能
+### 项目开发-课程审核功能
 
 **课程状态流转图：**
 课程发布状态：
 
-```plantuml
-@startuml
-[*] --> 课程未发布203001
-课程未发布203001 -right-> 课程发布203002 : 课程提交审核并且审核通过
-课程发布203002 -right-> 课程下架203003
-@enduml
-```
+![](./xcplus-pictures/Snipaste_2023-03-21_20-25-27.png)
 
 课程审核状态：
-```plantuml
-@startuml
-[*] --> 审核未提交
-审核未提交 --> 审核已提交
-审核已提交 --> 审核通过
-审核已提交 --> 审核未通过
-@enduml
-```
-**业务流程图：**
+![](./xcplus-pictures/Snipaste_2023-03-21_20-25-58.png)
 
 **数据模型：**
-```plantuml
-@startuml
-State 课程预发布表
-State 课程基本信息
-State 课程教学计划信息
-State 课程市场营销信息
-State 课程师资信息
-State 课程审核信息
-State 课程快照
-State 课程发布表
-
-课程快照 -left-> 课程基本信息
-课程快照 -left-> 课程市场营销信息
-课程快照 -up-> 课程教学计划信息
-课程快照 -down-> 课程师资信息
-
-课程快照 -right-> 课程预发布表 : 审核提交
-note on link 
-  将课程快照信息保存到预发布表
-  （避免审核数据与真实数据不一致）
-end note
-课程快照 -right-> 课程审核信息 : 审核提交
-
-课程预发布表 --> 课程发布表 : 审核通过
-@enduml
-
-```
+![](./xcplus-pictures/Snipaste_2023-03-21_20-26-29.png)
 
 **接口定义：**
 ```http
 POST content/courseaudit/commit/120
 ```
 
-### 课程发布功能
+### 项目开发-课程发布功能
 **需求分析：**
 1. 课程预览界面变化度不高，且信息量大，且访问量也大，如何减少db压力 ？ -> 生成静态页面保存到MinIO中；
 2. 如何快速搜索课程 -> 使用ES生成全文索引
@@ -985,30 +923,7 @@ BASE理论：
 + 最终一致性
 
 **业务流程：**
-```plantuml
-actor user as user
-participant client as client
-participant contentservice as content
-database coursepublish
-database mqmessage
-participant contentjob
-database elasticsearch
-
-
-user --> client : 课程发布
-client --> content : http调用
-content --> content : 一致性校验\n1.课程处于审核完成状态
-content --> coursepublish : 从预发布表中取出课程数据，\n插入到课程发布表中
-content --> mqmessage : 将课程发布任务添加到本地消息表
-contentjob --> mqmessage : 课程离线任务从本地消息表中取出课程发布任务
-contentjob --> elasticsearch : 将课程检索字段放入到es中
-contentjob --> redis : 存放课程缓存信息
-contentjob --> mediaservice : 通过媒资服务上传静态页面
-mediaservice --> minio : 存放课程静态页面
-contentjob --> mqmessage : 更新本地消息表状态
-```
-
-
+![](./xcplus-pictures/Snipaste_2023-03-21_20-27-05.png)
 **消息处理通用SDK开发思路：**
 SDK接口：
 ```Java
@@ -1107,10 +1022,207 @@ public class MediaServiceFallBackFactory implements FallbackFactory<MediaService
 }
 
 ```
+### 项目开发-搜索模块搭建
+**全文检索技术：** 使用分词技术将文章分词 -> 对每个词建立倒排索引；
+**业务流程：** 课程发布后通过消息处理方式创建索引；
+**elasticsearch 8.x 与kibanada搭建：**  [搭建流程](https://www.elastic.co/guide/en/elasticsearch/reference/8.6/docker.html)
++ elasticsearch：搜索服务；
++ kibana：es 可视化平台；
 
-### 课程搜索功能
-**全文检索技术：**
+第一步：使用`./bin/elasticsearch-create-enrollment-token -s kibana`命令创建token；
+第二步：使用`./bin/elasticsearch-reset-password -u elastic`命令重置elastic用户的密码
+```shell
+token:
+eyJ2ZXIiOiI4LjYuMSIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiZmRiNzBjYTk0YzI0NDU0Y2FhZjk2ZDY5Mzc0MjRjNGFiMGQxMTk0NmM1NDJmMDg0ZWU5ZjYyZGI5MmQyYzY3NSIsImtleSI6InFYd0JBNGNCT2gycnhNUUtCOVNVOmN2WXZ1dUpUU2tLVTNPSUp2T0lxMncifQ==
 
+username: elastic 
+password: qfd*66KB=Ds3Vw5=HBJi
+```
+
+第三步：查看`/elasticsearch/config/elasticsearch.yml`确认证书配置
+
+通过`localhost:5601/app/dev_tools#/console`访问kibana控制台；
+
+
+**IK分词器安装：** [宿主机向docker传送文件](https://blog.csdn.net/eyexin2018/article/details/124041673)，[elasticsearch安装IK分词器](https://blog.csdn.net/sdfadfsdf/article/details/107466784)
+
+使用命令` docker cp D:\CodeTools\elasticsearch-analysis-ik-8.6.1 0fd415c3f078:/usr/share/elasticsearch/plugins/ik`将宿主机下载ik分词器拷贝到es插件目录；
+
+注意ik分词器版本与es版本要一一致；
+
+**创建课程信息索引：**
+```json
+PUT /course-publish
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "companyId": {
+        "type": "keyword"
+      },
+      "companyName": {
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "type": "text"
+      },
+      "name": {
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "type": "text"
+      },
+      "users": {
+        "index": false,
+        "type": "text"
+      },
+      "tags": {
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "type": "text"
+      },
+      "mt": {
+        "type": "keyword"
+      },
+      "mtName": {
+        "type": "keyword"
+      },
+      "st": {
+        "type": "keyword"
+      },
+      "stName": {
+        "type": "keyword"
+      },
+      "grade": {
+        "type": "keyword"
+      },
+      "teachmode": {
+        "type": "keyword"
+      },
+      "pic": {
+        "index": false,
+        "type": "text"
+      },
+      "description": {
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "type": "text"
+      },
+      "createDate": {
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "type": "date"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "remark": {
+        "index": false,
+        "type": "text"
+      },
+      "charge": {
+        "type": "keyword"
+      },
+      "price": {
+        "type": "scaled_float",
+        "scaling_factor": 100
+      },
+      "originalPrice": {
+        "type": "scaled_float",
+        "scaling_factor": 100
+      },
+      "validDays": {
+        "type": "integer"
+      }
+    }
+  }
+}
+```
+
+**spring集成elasticsearch：** 使用[Elastisearch Java API Client(8.x版本)](https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/current/connecting.html) 进行Java调用；
+第一步：maven依赖
+```xml
+<dependency>
+    <groupId>co.elastic.clients</groupId>
+    <artifactId>elasticsearch-java</artifactId>
+    <version>8.6.2</version>
+</dependency>
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.json</groupId>
+    <artifactId>jakarta.json-api</artifactId>
+    <version>2.0.1</version>
+</dependency>
+```
+
+第二步：配置SSL连接（附带证书）
+```Java
+@Configuration
+public class EsConfig {
+    @Bean
+    public ElasticsearchClient elasticsearchClient() throws IOException {
+        // ca证书位置，通过elasticsearch.yml文件查看证书配置
+        // 将证书复制到本机可访问的位置
+        File certFile = new File("D:\\CodeTools\\http_ca.crt");
+
+        SSLContext sslContext = TransportUtils
+                .sslContextFromHttpCaCrt(certFile);
+
+        BasicCredentialsProvider credsProv = new BasicCredentialsProvider();
+        credsProv.setCredentials(
+                AuthScope.ANY, new UsernamePasswordCredentials("elastic", "dVjXAPv0yxxvoxxCNdp=")
+        );
+
+        RestClient restClient = RestClient
+                .builder(new HttpHost("localhost", 9200, "https"))
+                .setHttpClientConfigCallback(hc -> hc
+                        .setSSLContext(sslContext)
+                        .setDefaultCredentialsProvider(credsProv)
+                )
+                .build();
+
+// Create the transport and the API client
+        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        ElasticsearchClient client = new ElasticsearchClient(transport);
+        return client;
+    }
+}
+
+```
+第三步：编写单元测试文件：
+```Java
+/**
+ * 测试Spring工程链接elasticsearch
+ */
+@SpringBootTest
+public class ElasticsearchTest {
+    @Autowired
+    ElasticsearchClient client;
+
+    @Test
+    public void test_get_course_index() throws Exception{
+        SearchResponse<CourseIndex> search = client.search(s -> s
+                        .index("course-publish")
+                        .query( q -> q.match( t -> t.field("name").query("Java"))
+                        ),
+                CourseIndex.class);
+
+        for (Hit<CourseIndex> hit: search.hits().hits()) {
+            System.out.println(hit.source());
+        }
+    }
+
+}
+```
 ---
 ## 认证授权
 ### 模块需求分析
@@ -1467,18 +1579,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 **为什么要使用OAuth2协议：** 用于获取第三方系统的资源信息，因此诞生了这么一款安全的资源认证授权访问协议；
 
 **OAuth2协议认证的流程：**
-```plantuml
-@startuml
-Client -> "Auth System" : Authorization request
-"Auth System" -> "Resource Owner" : Grant code request
-"Resource Owner" -> "Auth System" : Authorization grant
-"Auth System" -> Client : Access token
-Client -> "Resource system" : Resource access with token
-"Resource system" -> "Resource system" : check the token
-"Resource system" -> Client : Resource
-
-@enduml
-```
+![](./xcplus-pictures/Snipaste_2023-03-21_20-27-52.png)
 
 ### JWT令牌
 
@@ -1492,17 +1593,7 @@ Client -> "Resource system" : Resource access with token
   + 签名：为前两者的签名信息，服务端保存签名私钥；
 
 **jwt令牌认证流程：**
-```plantuml
-participant client
-participant "auth system" as auth
-participant "resource system" as resource
-client -> auth : request jwt
-auth -> auth : generate jwt with private key\n (such as "xuecheng")
-auth -> client : return jwt
-client -> resource : request resource with jwt
-resource -> resource : check jwt with private key (xuecheng)
-resource -> client : return resource
-```
+![](./xcplus-pictures/Snipaste_2023-03-21_20-28-17.png)
 
 ### 网关统一认证
 **网关的职责：**
@@ -1786,76 +1877,10 @@ POST http://localhost:63070/auth/oauth/token?client_id=XcWebApp&client_secret=Xc
 
 **自定义认证服务前后spring security认证流程的变化：**
 spring security原始认证流程：
-```plantuml
-@startuml
-participant "UsernamePasswordAuthenticationFilter" as filter
-participant "AuthenticationManager" as manager
-participant "DaoAuthenticationProvider" as provider
-participant "UserDetailsService" as service
-
-note left of filter
-用户名密码过滤器，认证服务
-各项功能的入口就是过滤器
-end note
-
-filter -> manager : 请求认证管理器
-
-note left of manager
-认证服务管理器
-end note
-
-manager -> provider : 请求认证提供者进行认证
-note left provider
-认证服务提供者，security的默认实现
-就是通过编码器将原始密码与用户密码进行比对
-end note
-
-provider -> service : 获取用户信息（用于密码比对）
-service -> provider : 返还用户信息
-
-@enduml
-```
+![](./xcplus-pictures/Snipaste_2023-03-21_22-33-39.png)
 
 自定义认证服务流程：
-```plantuml
-@startuml
-participant "UsernamePasswordAuthenticationFilter" as filter
-participant "AuthenticationManager" as manager
-participant "DaoAuthenticationProvicerCustom" as provider
-participant "UserDetailsService" as service
-participant "AuthService" as auth
-
-note left of filter
-用户名密码过滤器，认证服务
-各项功能的入口就是过滤器
-end note
-
-filter -> manager : 请求认证管理器
-
-note left of manager
-认证服务管理器
-end note
-
-manager -> provider : 请求认证提供者进行认证
-note left provider
-认证服务提供者，这里我们使用自定义的认证服务
-替换security默认的密码比对流程，自定义空实现
-end note
-
-note left of service : 这里security会把http请求中的username\n参数传递给UserDetailsService，用于用户的查询
-provider -> service : 获取用户信息（用于密码比对）
-note left of auth
-自定义认证服务，在这里我们可以实现各种
-自定义的认证方式（例如密码比对、微信认证）
-end note
-service -> auth : 请求认证服务
-
-auth -> service : 认证结果
-
-service -> provider : UserDetails的返回结果会被封装到jwt令牌中
-
-@enduml
-```
+![](./xcplus-pictures/Snipaste_2023-03-21_22-34-15.png)
 
 **验证码微服务：** 因为用户名密码认证方式每一次认证都会访问数据库，因此可能会有各种脚本攻击（例如CSRF跨站请求伪造攻击等），因此我们需要验证码操作将脚本类的行为提前拦截；
 
